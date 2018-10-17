@@ -63,42 +63,8 @@ RUN ninja -C out.gn/arm64.release -j 32
 # Prepare files for archiving
 RUN rm -rf target/arm64-v8a
 RUN mkdir -p target/arm64-v8a target/symbols/arm64-v8a
-RUN cp -rf out.gn/arm64.release/*.so ./target/arm64-v8a
-RUN cp -rf out.gn/arm64.release/lib.unstripped/*.so ./target/symbols/arm64-v8a
-
-# # ARM
-# RUN python ./tools/dev/v8gen.py arm.release -vv
-# RUN rm  out.gn/arm.release/args.gn
-# COPY ./args_arm.gn out.gn/arm.release/args.gn
-# RUN ls -al out.gn/arm.release/
-# RUN cat out.gn/arm.release/args.gn
-# RUN sudo chmod 777 out.gn/arm.release/args.gn
-# RUN touch out.gn/arm.release/args.gn
-# # Build the V8 liblary
-# RUN ninja -C out.gn/arm.release -t clean
-# RUN ninja -C out.gn/arm.release -j 32
-# # Prepare files for archiving
-# RUN rm -rf target/armeabi-v7a target/symbols/armeabi-v7a
-# RUN mkdir -p target/armeabi-v7a target/symbols/armeabi-v7a
-# RUN cp -rf out.gn/arm.release/*.so ./target/armeabi-v7a
-# RUN cp -rf out.gn/arm.release/lib.unstripped/*.so ./target/symbols/armeabi-v7a
-
-# X86
-# RUN python ./tools/dev/v8gen.py ia32.release -vv
-# RUN rm out.gn/ia32.release/args.gn
-# COPY ./args_x86.gn out.gn/ia32.release/args.gn
-# RUN ls -al out.gn/ia32.release/
-# RUN cat out.gn/ia32.release/args.gn
-# RUN sudo chmod 777 out.gn/ia32.release/args.gn
-# RUN touch out.gn/ia32.release/args.gn
-# # Build the V8 liblary
-# RUN ninja -C out.gn/ia32.release -t clean 
-# RUN ninja -C out.gn/ia32.release -j 32
-# # Prepare files for archiving
-# RUN rm -rf target/x86
-# RUN mkdir -p target/x86 target/symbols/x86
-# RUN cp -rf out.gn/ia32.release/*.so ./target/x86
-# RUN cp -rf out.gn/ia32.release/lib.unstripped/*.so ./target/symbols/x86
+#RUN cp -rf out.gn/arm64.release/*.so ./target/arm64-v8a
+#RUN cp -rf out.gn/arm64.release/lib.unstripped/*.so ./target/symbols/arm64-v8a
 
 # X64
 RUN python ./tools/dev/v8gen.py x64.release -vv
@@ -114,8 +80,8 @@ RUN ninja -C out.gn/x64.release -j 32
 # Prepare files for archiving
 RUN rm -rf target/x64
 RUN mkdir -p target/x64 target/symbols/x64
-RUN cp -rf out.gn/x64.release/*.so ./target/x64
-RUN cp -rf out.gn/x64.release/lib.unstripped/*.so ./target/symbols/x64
+#RUN cp -rf out.gn/x64.release/*.so ./target/x64
+#RUN cp -rf out.gn/x64.release/lib.unstripped/*.so ./target/symbols/x64
 
 # Creating release archive
 RUN mkdir ./target/headers
@@ -128,10 +94,8 @@ RUN find target -name "libv8_for_testing.cr.so" -delete
 RUN find target/symbols -name "libc++_shared.so" -delete
 
 # some V8 versions copy stl to release folder, some not. We need exact version of stl V8 built with to be on the safe side.
-RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/arm64-v8a/libc++_shared.so ./target/arm64-v8a/
-#RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a/libc++_shared.so ./target/armeabi-v7a
-#RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/x86/libc++_shared.so ./target/x86/
-RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/x64/libc++_shared.so ./target/x86_64/
+#RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/arm64-v8a/libc++_shared.so ./target/arm64-v8a/
+#RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/x64/libc++_shared.so ./target/x86_64/
 
 WORKDIR /home/docker/v8/target/
 RUN zip -r ../v8.zip ./*
