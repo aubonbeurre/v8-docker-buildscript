@@ -66,6 +66,21 @@ RUN mkdir -p target/arm64-v8a target/symbols/arm64-v8a
 #RUN cp -rf out.gn/arm64.release/*.so ./target/arm64-v8a
 #RUN cp -rf out.gn/arm64.release/lib.unstripped/*.so ./target/symbols/arm64-v8a
 
+RUN python ./tools/dev/v8gen.py arm64.debug -vv
+RUN rm  out.gn/arm64.debug/args.gn
+COPY ./args_arm64_dbg.gn out.gn/arm64.debug/args.gn
+RUN ls -al out.gn/arm64.debug/
+RUN cat out.gn/arm64.debug/args.gn
+RUN sudo chmod 777 out.gn/arm64.debug/args.gn
+RUN touch out.gn/arm64.debug/args.gn
+RUN ninja -C out.gn/arm64.debug -t clean
+RUN ninja -C out.gn/arm64.debug -j 32
+# Prepare files for archiving
+RUN rm -rf target/arm64-v8a-dbg target/symbols/arm64-v8a-dbg
+RUN mkdir -p target/arm64-v8a-dbg target/symbols/arm64-v8a-dbg
+#RUN cp -rf out.gn/arm64.debug/*.so ./target/arm64-v8a-dbg
+#RUN cp -rf out.gn/arm64.debug/lib.unstripped/*.so ./target/symbols/arm64-v8a-dbg
+
 # X64
 RUN python ./tools/dev/v8gen.py x64.release -vv
 RUN rm out.gn/x64.release/args.gn
@@ -82,6 +97,22 @@ RUN rm -rf target/x64
 RUN mkdir -p target/x64 target/symbols/x64
 #RUN cp -rf out.gn/x64.release/*.so ./target/x64
 #RUN cp -rf out.gn/x64.release/lib.unstripped/*.so ./target/symbols/x64
+
+RUN python ./tools/dev/v8gen.py x64.debug -vv
+RUN rm out.gn/x64.debug/args.gn
+COPY ./args_x64_dbg.gn out.gn/x64.debug/args.gn
+RUN ls -al out.gn/x64.debug/
+RUN cat out.gn/x64.debug/args.gn
+RUN sudo chmod 777 out.gn/x64.debug/args.gn
+RUN touch out.gn/x64.debug/args.gn
+# Build the V8 liblary
+RUN ninja -C out.gn/x64.debug -t clean 
+RUN ninja -C out.gn/x64.debug -j 32
+# Prepare files for archiving
+RUN rm -rf target/x64-dbg target/symbols/x64-dbg
+RUN mkdir -p target/x64-dbg target/symbols/x64-dbg
+#RUN cp -rf out.gn/x64.debug/*.so ./target/x64-dbg
+#RUN cp -rf out.gn/x64.debug/lib.unstripped/*.so ./target/symbols/x64-dbg
 
 # Creating release archive
 RUN mkdir ./target/headers
