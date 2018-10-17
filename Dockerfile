@@ -28,8 +28,15 @@ RUN sudo apt-get install -y \
 				xz-utils \
 				zip \
 				emacs-nox
+
 RUN sudo echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
 WORKDIR /home/docker
+
+#RUN curl https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip -o android-ndk-r16b-linux-x86_64.zip \
+#    && unzip android-ndk-r16b-linux-x86_64.zip \
+#    && mkdir -p ~/Android/Sdk \
+#    && ln -s ~/android-ndk-r16b ~/Android/Sdk/ndk-bundle 
+
 # Get depot_tool
 RUN git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 ENV PATH /home/docker/depot_tools:"$PATH"
@@ -62,24 +69,23 @@ RUN ninja -C out.gn/arm64.release -t clean
 RUN ninja -C out.gn/arm64.release -j 32
 # Prepare files for archiving
 RUN rm -rf target/arm64-v8a
-RUN mkdir -p target/arm64-v8a target/symbols/arm64-v8a
-#RUN cp -rf out.gn/arm64.release/*.so ./target/arm64-v8a
-#RUN cp -rf out.gn/arm64.release/lib.unstripped/*.so ./target/symbols/arm64-v8a
+RUN mkdir -p target/arm64-v8a
+RUN cp -rf out.gn/arm64.release/clang_x64_v8_arm64/* ./target/arm64-v8a
 
-RUN python ./tools/dev/v8gen.py arm64.debug -vv
-RUN rm  out.gn/arm64.debug/args.gn
-COPY ./args_arm64_dbg.gn out.gn/arm64.debug/args.gn
-RUN ls -al out.gn/arm64.debug/
-RUN cat out.gn/arm64.debug/args.gn
-RUN sudo chmod 777 out.gn/arm64.debug/args.gn
-RUN touch out.gn/arm64.debug/args.gn
-RUN ninja -C out.gn/arm64.debug -t clean
-RUN ninja -C out.gn/arm64.debug -j 32
-# Prepare files for archiving
-RUN rm -rf target/arm64-v8a-dbg target/symbols/arm64-v8a-dbg
-RUN mkdir -p target/arm64-v8a-dbg target/symbols/arm64-v8a-dbg
-#RUN cp -rf out.gn/arm64.debug/*.so ./target/arm64-v8a-dbg
-#RUN cp -rf out.gn/arm64.debug/lib.unstripped/*.so ./target/symbols/arm64-v8a-dbg
+# ARM64 dbg
+#RUN python ./tools/dev/v8gen.py arm64.debug -vv
+#RUN rm  out.gn/arm64.debug/args.gn
+#COPY ./args_arm64_dbg.gn out.gn/arm64.debug/args.gn
+#RUN ls -al out.gn/arm64.debug/
+#RUN cat out.gn/arm64.debug/args.gn
+#RUN sudo chmod 777 out.gn/arm64.debug/args.gn
+#RUN touch out.gn/arm64.debug/args.gn
+#RUN ninja -C out.gn/arm64.debug -t clean
+#RUN ninja -C out.gn/arm64.debug -j 32
+## Prepare files for archiving
+#RUN rm -rf target/arm64-v8a-dbg
+#RUN mkdir -p target/arm64-v8a-dbg
+#RUN cp -rf out.gn/arm64.debug/clang_x64_v8_arm64/* ./target/arm64-v8a-dbg
 
 # X64
 RUN python ./tools/dev/v8gen.py x64.release -vv
@@ -93,40 +99,29 @@ RUN touch out.gn/x64.release/args.gn
 RUN ninja -C out.gn/x64.release -t clean 
 RUN ninja -C out.gn/x64.release -j 32
 # Prepare files for archiving
-RUN rm -rf target/x64
-RUN mkdir -p target/x64 target/symbols/x64
-#RUN cp -rf out.gn/x64.release/*.so ./target/x64
-#RUN cp -rf out.gn/x64.release/lib.unstripped/*.so ./target/symbols/x64
+RUN rm -rf target/x86_64
+RUN mkdir -p target/x86_64
+RUN cp -rf out.gn/x64.release/clang_x64/* ./target/x86_64
 
-RUN python ./tools/dev/v8gen.py x64.debug -vv
-RUN rm out.gn/x64.debug/args.gn
-COPY ./args_x64_dbg.gn out.gn/x64.debug/args.gn
-RUN ls -al out.gn/x64.debug/
-RUN cat out.gn/x64.debug/args.gn
-RUN sudo chmod 777 out.gn/x64.debug/args.gn
-RUN touch out.gn/x64.debug/args.gn
-# Build the V8 liblary
-RUN ninja -C out.gn/x64.debug -t clean 
-RUN ninja -C out.gn/x64.debug -j 32
-# Prepare files for archiving
-RUN rm -rf target/x64-dbg target/symbols/x64-dbg
-RUN mkdir -p target/x64-dbg target/symbols/x64-dbg
-#RUN cp -rf out.gn/x64.debug/*.so ./target/x64-dbg
-#RUN cp -rf out.gn/x64.debug/lib.unstripped/*.so ./target/symbols/x64-dbg
+# X64 dbg
+#RUN python ./tools/dev/v8gen.py x64.debug -vv
+#RUN rm out.gn/x64.debug/args.gn
+#COPY ./args_x64_dbg.gn out.gn/x64.debug/args.gn
+#RUN ls -al out.gn/x64.debug/
+#RUN cat out.gn/x64.debug/args.gn
+#RUN sudo chmod 777 out.gn/x64.debug/args.gn
+#RUN touch out.gn/x64.debug/args.gn
+## Build the V8 liblary
+#RUN ninja -C out.gn/x64.debug -t clean 
+#RUN ninja -C out.gn/x64.debug -j 32
+## Prepare files for archiving
+#RUN rm -rf target/x86_64-dbg
+#RUN mkdir -p target/x86_64-dbg
+#RUN cp -rf out.gn/x64.debug/clang_x64/* ./target/x86_64-dbg
 
 # Creating release archive
-RUN mkdir ./target/headers
+RUN mkdir -p ./target/headers
 RUN cp -rf include ./target/headers
-
-# We don't need testing lib in resulting package 
-RUN find target -name "libv8_for_testing.cr.so" -delete
-
-# stl lib from android-ndk have no symbols, so why bother copy them?
-RUN find target/symbols -name "libc++_shared.so" -delete
-
-# some V8 versions copy stl to release folder, some not. We need exact version of stl V8 built with to be on the safe side.
-#RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/arm64-v8a/libc++_shared.so ./target/arm64-v8a/
-#RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/x64/libc++_shared.so ./target/x86_64/
 
 WORKDIR /home/docker/v8/target/
 RUN zip -r ../v8.zip ./*
