@@ -68,24 +68,38 @@ RUN touch out.gn/arm64.release/args.gn
 RUN ninja -C out.gn/arm64.release -t clean
 RUN ninja -C out.gn/arm64.release -j 32
 # Prepare files for archiving
-RUN rm -rf target/arm64-v8a
-RUN mkdir -p target/arm64-v8a
-RUN cp -rf out.gn/arm64.release/clang_x64_v8_arm64/* ./target/arm64-v8a
+RUN rm -rf target/lib/android/arm64-v8a/release
+RUN mkdir -p target/lib/android/arm64-v8a/release
+RUN cp -rf out.gn/arm64.release/clang_x64_v8_arm64/obj/src/inspector/libinspector.a ./target/lib/android/arm64-v8a/release
+RUN cp -rf out.gn/arm64.release/clang_x64_v8_arm64/obj/third_party/icu/libicui18n.a ./target/lib/android/arm64-v8a/release
+RUN cp -rf out.gn/arm64.release/clang_x64_v8_arm64/obj/third_party/icu/libicuuc.a ./target/lib/android/arm64-v8a/release
+RUN cp -rf out.gn/arm64.release/clang_x64_v8_arm64/obj/libv8_nosnapshot.a ./target/lib/android/arm64-v8a/release
+RUN cp -rf out.gn/arm64.release/clang_x64_v8_arm64/obj/libv8_libsampler.a ./target/lib/android/arm64-v8a/release
+RUN cp -rf out.gn/arm64.release/clang_x64_v8_arm64/obj/libv8_libplatform.a ./target/lib/android/arm64-v8a/release
+RUN cp -rf out.gn/arm64.release/clang_x64_v8_arm64/obj/libv8_libbase.a ./target/lib/android/arm64-v8a/release
+RUN cp -rf out.gn/arm64.release/clang_x64_v8_arm64/obj/libv8_base.a ./target/lib/android/arm64-v8a/release
 
 # ARM64 dbg
-#RUN python ./tools/dev/v8gen.py arm64.debug -vv
-#RUN rm  out.gn/arm64.debug/args.gn
-#COPY ./args_arm64_dbg.gn out.gn/arm64.debug/args.gn
-#RUN ls -al out.gn/arm64.debug/
-#RUN cat out.gn/arm64.debug/args.gn
-#RUN sudo chmod 777 out.gn/arm64.debug/args.gn
-#RUN touch out.gn/arm64.debug/args.gn
-#RUN ninja -C out.gn/arm64.debug -t clean
-#RUN ninja -C out.gn/arm64.debug -j 32
-## Prepare files for archiving
-#RUN rm -rf target/arm64-v8a-dbg
-#RUN mkdir -p target/arm64-v8a-dbg
-#RUN cp -rf out.gn/arm64.debug/clang_x64_v8_arm64/* ./target/arm64-v8a-dbg
+RUN python ./tools/dev/v8gen.py arm64.debug -vv
+RUN rm  out.gn/arm64.debug/args.gn
+COPY ./args_arm64_dbg.gn out.gn/arm64.debug/args.gn
+RUN ls -al out.gn/arm64.debug/
+RUN cat out.gn/arm64.debug/args.gn
+RUN sudo chmod 777 out.gn/arm64.debug/args.gn
+RUN touch out.gn/arm64.debug/args.gn
+RUN ninja -C out.gn/arm64.debug -t clean
+RUN ninja -C out.gn/arm64.debug -j 32
+# Prepare files for archiving
+RUN rm -rf target/lib/android/arm64-v8a/debug
+RUN mkdir -p target/lib/android/arm64-v8a/debug
+RUN cp -rf out.gn/arm64.debug/clang_x64_v8_arm64/obj/src/inspector/libinspector.a ./target/lib/android/arm64-v8a/debug
+RUN cp -rf out.gn/arm64.debug/clang_x64_v8_arm64/obj/third_party/icu/libicui18n.a ./target/lib/android/arm64-v8a/debug
+RUN cp -rf out.gn/arm64.debug/clang_x64_v8_arm64/obj/third_party/icu/libicuuc.a ./target/lib/android/arm64-v8a/debug
+RUN cp -rf out.gn/arm64.debug/clang_x64_v8_arm64/obj/libv8_nosnapshot.a ./target/lib/android/arm64-v8a/debug
+RUN cp -rf out.gn/arm64.debug/clang_x64_v8_arm64/obj/libv8_libsampler.a ./target/lib/android/arm64-v8a/debug
+RUN cp -rf out.gn/arm64.debug/clang_x64_v8_arm64/obj/libv8_libplatform.a ./target/lib/android/arm64-v8a/debug
+RUN cp -rf out.gn/arm64.debug/clang_x64_v8_arm64/obj/libv8_libbase.a ./target/lib/android/arm64-v8a/debug
+RUN cp -rf out.gn/arm64.debug/clang_x64_v8_arm64/obj/libv8_base.a ./target/lib/android/arm64-v8a/debug
 
 # X64
 RUN python ./tools/dev/v8gen.py x64.release -vv
@@ -99,29 +113,46 @@ RUN touch out.gn/x64.release/args.gn
 RUN ninja -C out.gn/x64.release -t clean 
 RUN ninja -C out.gn/x64.release -j 32
 # Prepare files for archiving
-RUN rm -rf target/x86_64
-RUN mkdir -p target/x86_64
-RUN cp -rf out.gn/x64.release/clang_x64/* ./target/x86_64
+RUN rm -rf target/lib/android/x86_64/release
+RUN mkdir -p target/lib/android/x86_64/release
+RUN cp -rf out.gn/x64.release/clang_x64/obj/src/inspector/libinspector.a ./target/lib/android/x86_64/release
+RUN cp -rf out.gn/x64.release/clang_x64/obj/third_party/icu/libicui18n.a ./target/lib/android/x86_64/release
+RUN cp -rf out.gn/x64.release/clang_x64/obj/third_party/icu/libicuuc.a ./target/lib/android/x86_64/release
+RUN cp -rf out.gn/x64.release/clang_x64/obj/libv8_nosnapshot.a ./target/lib/android/x86_64/release
+RUN cp -rf out.gn/x64.release/clang_x64/obj/libv8_libsampler.a ./target/lib/android/x86_64/release
+RUN cp -rf out.gn/x64.release/clang_x64/obj/libv8_libplatform.a ./target/lib/android/x86_64/release
+RUN cp -rf out.gn/x64.release/clang_x64/obj/libv8_libbase.a ./target/lib/android/x86_64/release
+RUN cp -rf out.gn/x64.release/clang_x64/obj/libv8_base.a ./target/lib/android/x86_64/release
 
 # X64 dbg
-#RUN python ./tools/dev/v8gen.py x64.debug -vv
-#RUN rm out.gn/x64.debug/args.gn
-#COPY ./args_x64_dbg.gn out.gn/x64.debug/args.gn
-#RUN ls -al out.gn/x64.debug/
-#RUN cat out.gn/x64.debug/args.gn
-#RUN sudo chmod 777 out.gn/x64.debug/args.gn
-#RUN touch out.gn/x64.debug/args.gn
-## Build the V8 liblary
-#RUN ninja -C out.gn/x64.debug -t clean 
+RUN python ./tools/dev/v8gen.py x64.debug -vv
+RUN rm out.gn/x64.debug/args.gn
+COPY ./args_x64_dbg.gn out.gn/x64.debug/args.gn
+RUN ls -al out.gn/x64.debug/
+RUN cat out.gn/x64.debug/args.gn
+RUN sudo chmod 777 out.gn/x64.debug/args.gn
+RUN touch out.gn/x64.debug/args.gn
+# Build the V8 liblary
+RUN ninja -C out.gn/x64.debug -t clean 
 #RUN ninja -C out.gn/x64.debug -j 32
-## Prepare files for archiving
-#RUN rm -rf target/x86_64-dbg
-#RUN mkdir -p target/x86_64-dbg
-#RUN cp -rf out.gn/x64.debug/clang_x64/* ./target/x86_64-dbg
+# Prepare files for archiving
+RUN rm -rf target/lib/android/x86_64/debug
+RUN mkdir -p target/lib/android/x86_64/debug
+RUN cp -rf out.gn/x64.debug/clang_x64/obj/src/inspector/libinspector.a ./target/lib/android/x86_64/debug
+RUN cp -rf out.gn/x64.debug/clang_x64/obj/third_party/icu/libicui18n.a ./target/lib/android/x86_64/debug
+RUN cp -rf out.gn/x64.debug/clang_x64/obj/third_party/icu/libicuuc.a ./target/lib/android/x86_64/debug
+RUN cp -rf out.gn/x64.debug/clang_x64/obj/libv8_nosnapshot.a ./target/lib/android/x86_64/debug
+RUN cp -rf out.gn/x64.debug/clang_x64/obj/libv8_libsampler.a ./target/lib/android/x86_64/debug
+RUN cp -rf out.gn/x64.debug/clang_x64/obj/libv8_libplatform.a ./target/lib/android/x86_64/debug
+RUN cp -rf out.gn/x64.debug/clang_x64/obj/libv8_libbase.a ./target/lib/android/x86_64/debug
+RUN cp -rf out.gn/x64.debug/clang_x64/obj/libv8_base.a ./target/lib/android/x86_64/debug
 
 # Creating release archive
-RUN mkdir -p ./target/headers
-RUN cp -rf include ./target/headers
+RUN mkdir -p ./target
+RUN cp -rf include ./target
+
+RUN mkdir -p ./target/resource
+RUN cp -rf out.gn/arm64.release/icudtl.dat ./target/resource
 
 WORKDIR /home/docker/v8/target/
 RUN zip -r ../v8.zip ./*
