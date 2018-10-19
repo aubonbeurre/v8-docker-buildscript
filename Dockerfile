@@ -134,7 +134,7 @@ RUN sudo chmod 777 out.gn/x64.debug/args.gn
 RUN touch out.gn/x64.debug/args.gn
 # Build the V8 liblary
 RUN ninja -C out.gn/x64.debug -t clean 
-#RUN ninja -C out.gn/x64.debug -j 32
+RUN ninja -C out.gn/x64.debug -j 32
 # Prepare files for archiving
 RUN rm -rf target/lib/android/x86_64/debug
 RUN mkdir -p target/lib/android/x86_64/debug

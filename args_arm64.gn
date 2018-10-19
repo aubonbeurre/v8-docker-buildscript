@@ -11,3 +11,4 @@ v8_static_library = true
 #strip_absolute_paths_from_debug_symbols = false
 #strip_debug_info = false
 #symbol_level=1
+is_clang = true
